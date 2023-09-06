@@ -8,5 +8,5 @@ fi
 if [ ! -d "/var/log" ]; then
   read -p "Where are logs stored on your system? -> " dir
   touch $dir/orionrexec.log
-  chmod +w $dir/orionexec.log
+  chmod +w $dir/orionrexec.log
   
