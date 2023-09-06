@@ -5,6 +5,7 @@ import subprocess
 import crypt
 import threading
 import time
+import pwd
 
 def read_shell_output(shell_process, client_socket, stop_flag):
     for line in shell_process.stdout:
@@ -12,10 +13,16 @@ def read_shell_output(shell_process, client_socket, stop_flag):
             break
         client_socket.send(line)
 
+def get_uid(username):
+    try:
+        user_info = pwd.getpwnam(username)
+        return user_info.pw_uid
+    except KeyError:
+        return None
+
 def shell(client_socket):
     client_socket.send(b"Shell access granted. Type 'exit' to exit the shell.\n")
     shell_process = subprocess.Popen(['/bin/bash'], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
     stop_flag = threading.Event()
     output_thread = threading.Thread(target=read_shell_output, args=(shell_process, client_socket, stop_flag))
     output_thread.start()
@@ -52,9 +59,11 @@ def authenticate(client_socket, client_address):
     password_attempt = client_socket.recv(1024).strip().decode("utf-8")
 
     if crypt.crypt(password_attempt, PASSWORD.sp_pwdp) == PASSWORD.sp_pwdp:
+        uid = get_uid(username)
         f = open("/var/log/orionrexec.log", "a")
         f.write(os.popen('date').read().strip() + f" ~ Successful login by user: {username} IP: {client_address}\n")
         f.close()
+        os.setuid(uid)
         return True
     else:
         f = open("/var/log/orionrexec.log", "a")
