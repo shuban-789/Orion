@@ -1,10 +1,14 @@
 # OrionRexec
 
 - In development
-- Remote shell service letting users connect to their servers using a remote shell over a browser
+- AP CSP project
+- Python remote command execution server
 
-# Stack used
+# NOT final release, really insecure
 
-- Python for backend/functionality
-- JS for frontend
-- Linux support only
+- This has no ambitions of being a professional release as of now. It is very insecure
+- Working on security countermeasures
+
+# Main issue(s)
+
+- After the first command, command is not prompted for again
