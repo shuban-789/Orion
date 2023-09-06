@@ -3,27 +3,39 @@ import spwd
 import os
 import subprocess
 import crypt
+import threading
+import time
+
+def read_shell_output(shell_process, client_socket, stop_flag):
+    for line in shell_process.stdout:
+        if stop_flag.is_set():
+            break
+        client_socket.send(line)
 
 def shell(client_socket):
     client_socket.send(b"Shell access granted. Type 'exit' to exit the shell.\n")
     shell_process = subprocess.Popen(['/bin/bash'], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
+    stop_flag = threading.Event()
+    output_thread = threading.Thread(target=read_shell_output, args=(shell_process, client_socket, stop_flag))
+    output_thread.start()
+
     while True:
+        time.sleep(0.2)
         client_socket.send(b">>> ")
         command = client_socket.recv(1024).decode("utf-8")
         if command.lower() == "exit":
+            stop_flag.set() 
             break
 
         shell_process.stdin.write((command).encode("utf-8") + b'\n')
         shell_process.stdin.flush()
 
-        for line in shell_process.stdout:
-            client_socket.send(line)
-        
     shell_process.stdin.close()
     shell_process.stdout.close()
     shell_process.stderr.close()
     shell_process.kill()
+    output_thread.join()
     client_socket.send(b"Shell session closed.\n")
 
 def authenticate(client_socket, client_address):
