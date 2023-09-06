@@ -4,11 +4,19 @@
 - AP CSP project
 - Python remote command execution server
 
-# NOT final release, really insecure
+# Do not use for corporate environments
 
-- This has no ambitions of being a professional release as of now. It is very insecure
-- Working on security countermeasures
+- Still needs to be tested for possible vulnerabilities
+- Does not have a custom config file with configurations
 
 # Main issue(s)
 
-- After the first command, command is not prompted for again
+- There will be future updates on shell features
+
+# Usage
+
+- You will need a TCP client to connect to the server with port specification like:
+  `nc localhost 8080`
+
+- You must run `server.py` as root or with sudo permissions as it gets hashes from /etc/shadow (it uses setuid after authentication, root access is not given by default)
+- After server is running, have your client connect to the same port
