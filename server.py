@@ -1,65 +1,65 @@
 import socket
-import os
-import crypt
 import spwd
-import getpass
-import sys
+import os
 import subprocess
-
-def hash_password(passw):
-    return crypt.crypt(passw) # Hash string to unix hash
+import crypt
 
 def shell(client_socket):
-    client_socket.send(b"Shell access granted. Type 'exit' to exit the shell.\n") # Send message to client that access is granted, as function is called upon successful authentication
-    shell_process = subprocess.Popen(['/bin/bash'], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE) # Inititate bash shell, make sure input, output, and errors of commands can be communicated
+    client_socket.send(b"Shell access granted. Type 'exit' to exit the shell.\n")
+    shell_process = subprocess.Popen(['/bin/bash'], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
     while True:
-        command = client_socket.recv(1024).decode("utf-8") # Recieve command from client
-        if command.lower() == "exit": # If client wants to exit, break the command loop
+        client_socket.send(b">>> ")
+        command = client_socket.recv(1024).decode("utf-8")
+        if command.lower() == "exit":
             break
-        shell_process.stdin.write(command.encode("utf-8") + b'\n') # Write command to shell
-        shell_process.stdin.flush() 
-        output = shell_process.stdout.readline().decode("utf-8") # Read output
-        client_socket.send(output.encode("utf-8")) # Relay output to client
-    shell_process.stdin.close() # Close input, output, and error
+
+        shell_process.stdin.write((command).encode("utf-8") + b'\n')
+        shell_process.stdin.flush()
+
+        for line in shell_process.stdout:
+            client_socket.send(line)
+        
+    shell_process.stdin.close()
     shell_process.stdout.close()
     shell_process.stderr.close()
-    shell_process.kill() # Kill process and close sshell
+    shell_process.kill()
     client_socket.send(b"Shell session closed.\n")
-    
+
 def authenticate(client_socket, client_address):
-    client_socket.send(b"Enter the username: ") # Prompt for user
-    username = client_socket.recv(1024).strip().decode("utf-8") # Recieve username
-    
+    client_socket.send(b"Enter the username: ")
+    username = client_socket.recv(1024).strip().decode("utf-8")
+
     try:
-        PASSWORD = spwd.getspnam(username).sp_pwdp # Get hash of password for that username
+        PASSWORD = spwd.getspnam(username)
     except KeyError:
-        client_socket.send(b"User not found.\n") # But if user does not exist, relay that information
+        client_socket.send(b"User not found.\n")
         return False
 
-    client_socket.send(b"Enter the password: ") # Prompt for password
-    password_attempt = client_socket.recv(1024).strip().decode("utf-8") # Get password
+    client_socket.send(b"Enter the password: ")
+    password_attempt = client_socket.recv(1024).strip().decode("utf-8")
 
-    if hash_password(password_attempt) == PASSWORD: # Check if hashes match
-        f = open("/var/log/orionrexec.log","a") # Append information about successful login into the log file
-        f.write(os.popen('date').read().strip() + " ~ Successful login by user: " + username + " IP: {client_address}\n")
+    if crypt.crypt(password_attempt, PASSWORD.sp_pwdp) == PASSWORD.sp_pwdp:
+        f = open("/var/log/orionrexec.log", "a")
+        f.write(os.popen('date').read().strip() + f" ~ Successful login by user: {username} IP: {client_address}\n")
         f.close()
         return True
     else:
-        client_socket.send(b"Authentication failed.\n") # Append information about unsuccessful login into the log file
-        f = open("/var/log.orionrexec.log","a")
-        f.write(os.popen('date').read().strip() + " ~ Unsuccessful login from IP: {client_address}\n")
+        f = open("/var/log/orionrexec.log", "a")
+        f.write(os.popen('date').read().strip() + f" ~ Unsuccessful login from IP: {client_address}\n")
         f.close()
+        client_socket.send(b"Authentication failed.\n")
         return False
 
 def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind(('0.0.0.0', 8080))
     s.listen(1)
-    
+
     print("Waiting for connection...")
-    
+
     connection, address = s.accept()
-    
+
     if authenticate(connection, address[0]):
         print("Authentication successful by: " + address[0])
         connection.send(b"Authentication successful. You now have access to the shell.\n")
