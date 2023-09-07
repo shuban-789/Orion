@@ -1,10 +1,22 @@
 # OrionRexec
 
 - In development
-- Remote shell service letting users connect to their servers using a remote shell over a browser
+- AP CSP project
+- Python remote command execution server
 
-# Stack used
+# Do not use for corporate environments
 
-- Python for backend/functionality
-- JS for frontend
-- Linux support only
+- Still needs to be tested for possible vulnerabilities
+- Does not have a custom config file with configurations
+
+# Main issue(s)
+
+- There will be future updates on shell features
+
+# Usage
+
+- You will need a TCP client to connect to the server with port specification like:
+  `nc localhost 8080`
+
+- You must run `server.py` as root or with sudo permissions as it gets hashes from /etc/shadow (it uses setuid after authentication, root access is not given by default)
+- After server is running, have your client connect to the same port

