@@ -9,4 +9,5 @@ if [ ! -d "/var/log" ]; then
   read -p "Where are logs stored on your system? -> " dir
   touch $dir/orionrexec.log
   chmod +w $dir/orionrexec.log
-  
+echo "=== Setting permissions... ==="
+chmod +x server.py
