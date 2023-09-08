@@ -1,7 +1,6 @@
-# OrionRexec
+# Orion Remote Execution
 
 - In development
-- AP CSP project
 - Python remote command execution server
 
 # Do not use for corporate environments

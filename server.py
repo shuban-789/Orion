@@ -1,3 +1,8 @@
+# ------------------------------------
+# Authors: Shuban Pal and Hayden Chen
+# Affiliation: Del Norte High School
+# ------------------------------------
+
 import socket
 import spwd
 import os
