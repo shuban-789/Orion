@@ -1,4 +1,4 @@
-# OrionRexec
+# Orion Remote Execution
 
 - In development
 - AP CSP project
