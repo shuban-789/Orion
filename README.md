@@ -19,3 +19,7 @@
 
 - You must run `server.py` as root or with sudo permissions as it gets hashes from /etc/shadow (it uses setuid after authentication, root access is not given by default)
 - After server is running, have your client connect to the same port
+
+# Preview
+
+![preview](https://raw.githubusercontent.com/shuban-789/Markdown-images/main/Screenshot%202023-09-09%20143009.png)
