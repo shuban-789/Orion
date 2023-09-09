@@ -22,4 +22,4 @@
 
 # Preview
 
-![preview](https://raw.githubusercontent.com/shuban-789/Markdown-images/main/Screenshot%202023-09-09%20143009.png)
+![preview](https://raw.githubusercontent.com/shuban-789/Markdown-images/main/Screenshot%202023-09-09%20142952.png)
