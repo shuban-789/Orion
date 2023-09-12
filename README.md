@@ -1,4 +1,4 @@
-# Orion Remote Execution
+# Orion RSH Server
 
 - In development
 - Python remote command execution server
@@ -27,3 +27,8 @@
 # Diagram
 
 ![diagram](https://raw.githubusercontent.com/shuban-789/Markdown-images/main/image%20(3).png)
+
+# Coming soon!
+
+- SSL support
+- Customizable configurations
