@@ -1,6 +1,8 @@
 # ------------------------------------
 # Authors: Shuban Pal and Hayden Chen
-# Affiliation: Del Norte High School
+# Application: Orion RSH Server
+# Version: 2.1
+# Documentation: https://github.com/shuban-789/Orion
 # ------------------------------------
 
 import socket
