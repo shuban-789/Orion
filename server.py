@@ -17,8 +17,8 @@ import time
 
 ### Global Configs ###
 
-SSLCERT="/etc/orion/key/orion.crt"
-SSLKEY="/etc/orion/key/orion.key"
+SSLCERT="/path/to/your/cert"
+SSLKEY="/path/to/your/key"
 
 ### CONFIG COLLECTION: ORION V2.1 ###
 
