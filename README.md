@@ -30,5 +30,4 @@
 
 # Coming soon!
 
-- SSL support
 - Customizable configurations
