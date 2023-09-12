@@ -5,14 +5,23 @@
 # Documentation: https://github.com/shuban-789/Orion
 # ------------------------------------
 
+import crypt
+import os
+import pwd
 import socket
 import spwd
-import os
+import ssl
 import subprocess
-import crypt
 import threading
 import time
-import pwd
+
+### Global Configs ###
+
+SSLCERT="/etc/orion/key/orion.crt"
+SSLKEY="/etc/orion/key/orion.key"
+
+### CONFIG COLLECTION: ORION V2.1 ###
+
 
 def read_shell_output(shell_process, client_socket, stop_flag):
     for line in shell_process.stdout:
@@ -35,7 +44,7 @@ def shell(client_socket):
     output_thread.start()
 
     while True:
-        prompt = f"\033[96m[orionshell]--> "
+        prompt = f"\033[96m[orionshell]>>> "
         prompt = prompt.encode('ASCII')
         time.sleep(0.2)
         client_socket.send(prompt)
@@ -43,7 +52,6 @@ def shell(client_socket):
         if command.lower() == "exit":
             stop_flag.set() 
             break
-
         shell_process.stdin.write((command).encode("utf-8") + b'\n')
         shell_process.stdin.flush()
 
@@ -57,7 +65,6 @@ def shell(client_socket):
 def authenticate(client_socket, client_address):
     client_socket.send(b"Enter the username: ")
     username = client_socket.recv(1024).strip().decode("utf-8")
-
     try:
         PASSWORD = spwd.getspnam(username)
     except KeyError:
@@ -82,7 +89,9 @@ def authenticate(client_socket, client_address):
         return False
 
 def main():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    server_context.load_cert_chain(SSLCERT, SSLKEY)
+    s = server_context.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
     s.bind(('0.0.0.0', 8080))
     s.listen(1)
 
