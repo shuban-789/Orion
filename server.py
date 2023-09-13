@@ -1,9 +1,9 @@
-# ------------------------------------
+#####################################################
 # Authors: Shuban Pal and Hayden Chen
 # Application: Orion RSH Server
 # Version: 2.1
 # Documentation: https://github.com/shuban-789/Orion
-# ------------------------------------
+#####################################################
 
 import crypt
 import os
