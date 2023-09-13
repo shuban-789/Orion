@@ -6,7 +6,8 @@
 # Do not use for corporate environments
 
 - Still needs to be tested for possible vulnerabilities
-- Does not have a custom config file with configurations
+- Does not have a custom config file with configurations (Although this is in store for update 2.3)
+- Each update newer supported configs will be added. Each config, its functions, and its options can be read in the documentation
 
 # Main issue(s)
 
