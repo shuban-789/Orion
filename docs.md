@@ -1,5 +1,11 @@
 # Configure SSL
-- Replace "SSLKEY" and "SSLCERT" variable with the path to your SSL certification and SSL key
-- It can be self-signed
-- Read openssl documentation for more help on generating SSL keys
-- If you configure SSL, you may have to use s_client to access the server
+
+- Generate key via openssl
+- Use SSLcert and SSLkey attributes from the config file
+
+# Configuration for /etc/orion/orion.conf
+
+`Allowroot=(yes/no)` - Permit root login or not on RSH server
+`BannedUsers=(user1,...,usern)` - Ban the login of these users
+`SSLkey=(path/to/file)` - Configure the path to the SSL key
+`SSLcert=(path/to/file)` - Configure the path to the SSL certificate
