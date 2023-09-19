@@ -31,4 +31,5 @@
 
 # Coming soon!
 
-- Customizable configurations
+- To be determined
+- Most likely more customizable configurations and shell features
