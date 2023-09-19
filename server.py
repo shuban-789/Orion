@@ -1,9 +1,23 @@
-#####################################################
+
+
+1 of 5,331
+(no subject)
+Inbox
+
+Shuban Pal <cybergeek11929@gmail.com>
+Attachments
+9:41 AM (3 minutes ago)
+to Shuban
+
+
+ One attachment
+  •  Scanned by Gmail
+######################################################
 # Authors: Shuban Pal and Hayden Chen
 # Application: Orion RSH Server
-# Version: 2.1
+# Version: 2.3
 # Documentation: https://github.com/shuban-789/Orion
-#####################################################
+######################################################
 
 import crypt
 import os
@@ -17,11 +31,36 @@ import time
 
 ### Global Configs ###
 
-SSLCERT="/path/to/your/cert"
-SSLKEY="/path/to/your/key"
+ALLOWROOT="yes"
+BANNEDUSERS=[]
+SSLCERT=""
+SSLKEY=""
 
-### CONFIG COLLECTION: ORION V2.1 ###
+### CONFIG COLLECTION: ORION V2.3 ###
 
+### PARSING ALGORITHM: ORION V2.3 ###
+o = open("/etc/orion/orion.conf","r")
+configs = o.readlines()
+for i in configs:
+	n = i.strip()
+	if "AllowRoot=" in n:
+		if n[10:] == "yes":
+			ALLOWROOT="yes"
+		elif n[10:] == "no":
+			ALLOWROOT="no"
+		else:
+			ALLOWROOT="yes"
+	if "BannedUsers=" in n:
+		li = n[12:]
+		banlist = li.split(",")
+		for j in banlist:
+			BANNEDUSERS.append(j)
+	if "SSLcert=" in n:
+		SSLCERT = n[8:]
+	if "SSLkey=" in n:
+		SSLKEY = n[7:]
+
+### END OF CONFIG PARSING: ORION V2.3
 
 def read_shell_output(shell_process, client_socket, stop_flag):
     for line in shell_process.stdout:
@@ -65,6 +104,13 @@ def shell(client_socket):
 def authenticate(client_socket, client_address):
     client_socket.send(b"Enter the username: ")
     username = client_socket.recv(1024).strip().decode("utf-8")
+    if ALLOWROOT == "no" and username == "root":
+       client_socket.send(b"Root access is not permitted on this system.\n")
+       return False
+    if len(BANNEDUSERS) != 0:
+       for i in BANNEDUSERS:
+          if username == i:
+             return False
     try:
         PASSWORD = spwd.getspnam(username)
     except KeyError:
