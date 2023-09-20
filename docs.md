@@ -5,7 +5,7 @@
 
 # Configuration for /etc/orion/orion.conf
 
-`Allowroot=(yes/no)` - Permit root login or not on RSH server
+`AllowRoot=(yes/no)` - Permit root login or not on RSH server
 
 `BannedUsers=(user1,...,usern)` - Ban the login of these users
 
