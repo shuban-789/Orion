@@ -11,3 +11,6 @@ if [ ! -d "/var/log" ]; then
   chmod +w $dir/orionrexec.log
 echo "=== Setting permissions... ==="
 chmod +x server.py
+echo "=== Setting up configuration files... ==="
+mkdir /etc/orion
+touch /etc/orion/orion.conf
