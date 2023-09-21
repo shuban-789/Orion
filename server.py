@@ -25,6 +25,7 @@ SSLKEY=""
 ### CONFIG COLLECTION: ORION V2.3 ###
 
 ### PARSING ALGORITHM: ORION V2.3 ###
+# Iterate through the orion.conf file, if the config matches, read the parameter given and assign the data type accordingly
 o = open("/etc/orion/orion.conf","r")
 configs = o.readlines()
 for i in configs:
@@ -48,12 +49,14 @@ for i in configs:
 
 ### END OF CONFIG PARSING: ORION V2.3
 
+# Read shell output. Make sure all the output is covered
 def read_shell_output(shell_process, client_socket, stop_flag):
     for line in shell_process.stdout:
         if stop_flag.is_set():
             break
         client_socket.send(line)
 
+# Get uid of a specific user
 def get_uid(username):
     try:
         user_info = pwd.getpwnam(username)
