@@ -1,6 +1,5 @@
 ######################################################
-# Authors: Shuban Pal
-# Tested by: Hayden Chen
+# Author: Shuban Pal
 # Application: Orion RSH Server
 # Version: 2.3
 # Documentation: https://github.com/shuban-789/Orion
