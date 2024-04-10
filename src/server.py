@@ -17,37 +17,33 @@ import time
 
 ### Global Configs ###
 
-ALLOWROOT="yes"
-BANNEDUSERS=[]
-SSLCERT=""
-SSLKEY=""
+ALLOWROOT = "yes"
+BANNEDUSERS = []
+SSLCERT = ""
+SSLKEY = ""
 
-### CONFIG COLLECTION: ORION V2.3 ###
-
-### PARSING ALGORITHM: ORION V2.3 ###
 # Iterate through the orion.conf file, if the config matches, read the parameter given and assign the data type accordingly
-o = open("/etc/orion/orion.conf","r")
-configs = o.readlines()
-for i in configs:
-	n = i.strip()
-	if "AllowRoot=" in n:
-		if n[10:] == "yes":
-			ALLOWROOT="yes"
-		elif n[10:] == "no":
-			ALLOWROOT="no"
-		else:
-			ALLOWROOT="yes"
-	if "BannedUsers=" in n:
-		li = n[12:]
-		banlist = li.split(",")
-		for j in banlist:
-			BANNEDUSERS.append(j)
-	if "SSLcert=" in n:
-		SSLCERT = n[8:]
-	if "SSLkey=" in n:
-		SSLKEY = n[7:]
-
-### END OF CONFIG PARSING: ORION V2.3
+def parse_config():
+    o = open("/etc/orion/orion.conf","r")
+    configs = o.readlines()
+    for i in configs:
+        n = i.strip()
+        if "AllowRoot=" in n:
+            if n[10:] == "yes":
+                ALLOWROOT="yes"
+            elif n[10:] == "no":
+                ALLOWROOT="no"
+            else:
+                ALLOWROOT="yes"
+        if "BannedUsers=" in n:
+            li = n[12:]
+            banlist = li.split(",")
+            for j in banlist:
+                BANNEDUSERS.append(j)
+        if "SSLcert=" in n:
+            SSLCERT = n[8:]
+        if "SSLkey=" in n:
+            SSLKEY = n[7:]
 
 # Read shell output. Make sure all the output is covered
 def read_shell_output(shell_process, client_socket, stop_flag):
@@ -94,12 +90,12 @@ def authenticate(client_socket, client_address):
     client_socket.send(b"Enter the username: ")
     username = client_socket.recv(1024).strip().decode("utf-8")
     if ALLOWROOT == "no" and username == "root":
-       client_socket.send(b"Root access is not permitted on this system.\n")
-       return False
+        client_socket.send(b"Root access is not permitted on this system.\n")
+        return False
     if len(BANNEDUSERS) != 0:
-       for i in BANNEDUSERS:
-          if username == i:
-             return False
+        for i in BANNEDUSERS:
+            if username == i:
+                return False
     try:
         PASSWORD = spwd.getspnam(username)
     except KeyError:
@@ -143,4 +139,5 @@ def main():
         connection.close()
 
 if __name__ == "__main__":
+    parse_config()
     main()
