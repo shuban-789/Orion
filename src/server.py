@@ -68,7 +68,7 @@ def shell(client_socket):
     output_thread.start()
 
     while True:
-        prompt = f"\033[96m[orionshell]>>> "
+        prompt = f"\033[96morion> "
         prompt = prompt.encode('ASCII')
         time.sleep(0.2)
         client_socket.send(prompt)
