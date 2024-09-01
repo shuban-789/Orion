@@ -3,7 +3,7 @@
 - In development
 - Python remote command execution server
 
-# Do not use for corporate environments
+# Do Not Use for Corporate Environments
 
 - Still needs to be tested for possible vulnerabilities
 - Does not have a custom config file with configurations (Although this is in store for update 2.3)
