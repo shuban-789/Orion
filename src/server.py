@@ -15,7 +15,8 @@ SSLCERT = ""
 SSLKEY = ""
 
 class Main:
-    def __init__(self):
+    def __init__(self, port):
+        self.port = port
         open_instance = open("/etc/orion/orion.conf","r")
         configs = o.readlines()
         for i in configs:
@@ -113,7 +114,7 @@ class Main:
         server_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         server_context.load_cert_chain(SSLCERT, SSLKEY)
         s = server_context.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
-        s.bind(('0.0.0.0', 8080))
+        s.bind(('0.0.0.0', self.port))
         s.listen(1)
     
         print("Waiting for connection...")
@@ -129,5 +130,5 @@ class Main:
             connection.close()
 
 if __name__ == "__main__":
-    parse_config()
-    main()
+    Instance = Main(port=8080)
+    Instance.run()
