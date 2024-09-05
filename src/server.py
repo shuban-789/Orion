@@ -1,25 +1,58 @@
-# ------------------------------------
-# Authors: Shuban Pal and Hayden Chen
+######################################################
+# Author: Shuban Pal
 # Application: Orion RSH Server
-# Version: 2.1
+# Version: 2.3
 # Documentation: https://github.com/shuban-789/Orion
-# ------------------------------------
+######################################################
 
+import crypt
+import os
+import pwd
 import socket
 import spwd
-import os
+import ssl
 import subprocess
-import crypt
 import threading
 import time
-import pwd
 
+### Global Configs ###
+
+ALLOWROOT = "yes"
+BANNEDUSERS = []
+SSLCERT = ""
+SSLKEY = ""
+
+# Iterate through the orion.conf file, if the config matches, read the parameter given and assign the data type accordingly
+def parse_config():
+    o = open("/etc/orion/orion.conf","r")
+    configs = o.readlines()
+    for i in configs:
+        n = i.strip()
+        if "AllowRoot=" in n:
+            if n[10:] == "yes":
+                ALLOWROOT="yes"
+            elif n[10:] == "no":
+                ALLOWROOT="no"
+            else:
+                ALLOWROOT="yes"
+        if "BannedUsers=" in n:
+            li = n[12:]
+            banlist = li.split(",")
+            for j in banlist:
+                BANNEDUSERS.append(j)
+        if "SSLcert=" in n:
+            SSLCERT = n[8:]
+        if "SSLkey=" in n:
+            SSLKEY = n[7:]
+
+# Read shell output. Make sure all the output is covered
 def read_shell_output(shell_process, client_socket, stop_flag):
     for line in shell_process.stdout:
         if stop_flag.is_set():
             break
         client_socket.send(line)
 
+# Get uid of a specific user
 def get_uid(username):
     try:
         user_info = pwd.getpwnam(username)
@@ -35,7 +68,7 @@ def shell(client_socket):
     output_thread.start()
 
     while True:
-        prompt = f"\033[96m[orionshell]--> "
+        prompt = f"\033[96morion> "
         prompt = prompt.encode('ASCII')
         time.sleep(0.2)
         client_socket.send(prompt)
@@ -43,7 +76,6 @@ def shell(client_socket):
         if command.lower() == "exit":
             stop_flag.set() 
             break
-
         shell_process.stdin.write((command).encode("utf-8") + b'\n')
         shell_process.stdin.flush()
 
@@ -57,7 +89,13 @@ def shell(client_socket):
 def authenticate(client_socket, client_address):
     client_socket.send(b"Enter the username: ")
     username = client_socket.recv(1024).strip().decode("utf-8")
-
+    if ALLOWROOT == "no" and username == "root":
+        client_socket.send(b"Root access is not permitted on this system.\n")
+        return False
+    if len(BANNEDUSERS) != 0:
+        for i in BANNEDUSERS:
+            if username == i:
+                return False
     try:
         PASSWORD = spwd.getspnam(username)
     except KeyError:
@@ -82,7 +120,9 @@ def authenticate(client_socket, client_address):
         return False
 
 def main():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    server_context.load_cert_chain(SSLCERT, SSLKEY)
+    s = server_context.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
     s.bind(('0.0.0.0', 8080))
     s.listen(1)
 
@@ -99,4 +139,5 @@ def main():
         connection.close()
 
 if __name__ == "__main__":
+    parse_config()
     main()

@@ -3,14 +3,11 @@
 - In development
 - Python remote command execution server
 
-# Do not use for corporate environments
+# Do Not Use for Corporate Environments
 
 - Still needs to be tested for possible vulnerabilities
-- Does not have a custom config file with configurations
-
-# Main issue(s)
-
-- There will be future updates on shell features
+- Does not have a custom config file with configurations (Although this is in store for update 2.3)
+- Each update newer supported configs will be added. Each config, its functions, and its options can be read in the documentation
 
 # Usage
 
@@ -30,5 +27,6 @@
 
 # Coming soon!
 
-- SSL support
-- Customizable configurations
+- To be determined
+- Most likely more customizable configurations and shell features
+- Use local PAM policies
