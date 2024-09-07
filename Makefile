@@ -1,10 +1,9 @@
 PORT=8080
 
-all: exec
+all: execbg
 
-exec:
+execbg:
   python3 src/server.py $(PORT) &
 
-stop:
-
-
+exec:
+  python3 src/server.py $(PORT)
