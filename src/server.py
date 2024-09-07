@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import crypt
 import os
 import pwd
@@ -7,12 +9,13 @@ import ssl
 import subprocess
 import threading
 import time
-
+import sys
 
 ALLOWROOT = "yes"
 BANNEDUSERS = []
 SSLCERT = ""
 SSLKEY = ""
+PORT = 8080
 
 class Main:
     def __init__(self, port):
@@ -37,6 +40,10 @@ class Main:
                 SSLCERT = n[8:]
             if "SSLkey=" in n:
                 SSLKEY = n[7:]
+        if len(sys.argv) != 2:
+            print("Usage: ./server.py <PORT>")
+        else:
+            PORT = sys.argv[1]
     
     def read_shell_output(shell_process, client_socket, stop_flag):
         for line in shell_process.stdout:
@@ -130,5 +137,5 @@ class Main:
             connection.close()
 
 if __name__ == "__main__":
-    Instance = Main(port=8080)
+    Instance = Main(port=PORT)
     Instance.run()
