@@ -1,6 +1,5 @@
 # Orion RSH Server
 
-- In development
 - Python remote command execution server
 
 # Do Not Use for Corporate Environments
