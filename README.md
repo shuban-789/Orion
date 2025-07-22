@@ -1,3 +1,7 @@
+# Notice (7/22/2025)
+
+- This repository will be archived. This project, although simple, was the beginning of my experience through real hands-on project based learning experience. Further changes are unlikely, but this repository is available for fork.
+
 # Orion RSH Server
 
 - Python remote command execution server
